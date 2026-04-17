@@ -4,6 +4,7 @@ import { Star } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { getStatusLabel, getStatusVariant } from '@/lib/book-helpers'
+import { highlightText } from '@/lib/highlight'
 import type { Book } from '@/types/book'
 
 const BLUR_DATA_URL =
@@ -12,9 +13,14 @@ const BLUR_DATA_URL =
 interface BookCardProps {
   book: Book
   priority?: boolean
+  searchQuery?: string
 }
 
-export function BookCard({ book, priority = false }: BookCardProps) {
+export function BookCard({
+  book,
+  priority = false,
+  searchQuery = '',
+}: BookCardProps) {
   return (
     <Link href={`/books/${book.id}`} className="block">
       <Card className="gap-0 overflow-hidden p-0 transition-shadow hover:shadow-md">
@@ -44,10 +50,10 @@ export function BookCard({ book, priority = false }: BookCardProps) {
 
         <CardContent className="space-y-1 p-4">
           <h3 className="line-clamp-2 text-sm leading-snug font-semibold">
-            {book.title || '제목 없음'}
+            {highlightText(book.title || '제목 없음', searchQuery)}
           </h3>
           <p className="text-muted-foreground text-xs">
-            {book.author || '저자 미상'}
+            {highlightText(book.author || '저자 미상', searchQuery)}
           </p>
 
           {book.rating > 0 && (
