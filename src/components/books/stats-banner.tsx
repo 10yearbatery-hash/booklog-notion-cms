@@ -6,9 +6,15 @@ interface StatsBannerProps {
   stats: BookStats
 }
 
+const RATING_LEVELS = [5, 4, 3, 2, 1] as const
+
 export function StatsBanner({ stats }: StatsBannerProps) {
   const completionRate =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0
+
+  const ratingValues = Object.values(stats.ratingDistribution)
+  const totalRated = ratingValues.reduce((sum, n) => sum + n, 0)
+  const maxCount = Math.max(...ratingValues, 1)
 
   return (
     <div className="bg-card rounded-xl border p-6">
@@ -41,6 +47,41 @@ export function StatsBanner({ stats }: StatsBannerProps) {
           <span>{completionRate}%</span>
         </div>
         <Progress value={completionRate} className="h-2" />
+      </div>
+
+      <div className="mt-5 border-t pt-4">
+        <p className="text-muted-foreground mb-2 text-xs">별점 분포</p>
+        {totalRated === 0 ? (
+          <p className="text-muted-foreground py-2 text-xs">
+            별점이 등록된 책이 없습니다.
+          </p>
+        ) : (
+          <ul className="space-y-1.5">
+            {RATING_LEVELS.map(level => {
+              const count = stats.ratingDistribution[level]
+              const percent = (count / maxCount) * 100
+              return (
+                <li key={level} className="flex items-center gap-2 text-xs">
+                  <span
+                    className="flex w-9 shrink-0 items-center gap-1 font-medium"
+                    aria-hidden="true"
+                  >
+                    {level}
+                    <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                  </span>
+                  <Progress
+                    value={percent}
+                    className="h-1.5 flex-1"
+                    aria-label={`별점 ${level}점 ${count}권`}
+                  />
+                  <span className="text-muted-foreground w-6 text-right tabular-nums">
+                    {count}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        )}
       </div>
     </div>
   )
