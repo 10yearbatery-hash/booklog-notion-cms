@@ -11,9 +11,9 @@
 | Phase | 단계명                              | 예상 소요 시간 |     상태     |
 | :---: | :---------------------------------- | :------------: | :----------: |
 |   0   | 사전 준비                           |      완료      |      ✅      |
-|   1   | 프로젝트 골격 (구조, 환경 설정)     |    0.5-1일     | 🟡 부분 완료 |
-|   2   | 공통 모듈 (모든 기능에서 쓰는 것들) |    0.5-1일     |   ⚪ 대기    |
-|   3   | 핵심 기능 (가장 중요한 기능)        |     2-3일      |   ⚪ 대기    |
+|   1   | 프로젝트 골격 (구조, 환경 설정)     |    0.5-1일     |      ✅      |
+|   2   | 공통 모듈 (모든 기능에서 쓰는 것들) |    0.5-1일     |      ✅      |
+|   3   | 핵심 기능 (가장 중요한 기능)        |     2-3일      | 🟡 부분 완료 |
 |   4   | 추가 기능 (부가적인 기능)           |     2-4일      |   ⚪ 대기    |
 |   5   | 최적화 및 배포                      |     1-2일      |   ⚪ 대기    |
 
@@ -44,7 +44,7 @@
 
 ---
 
-## 🏗️ Phase 1: 프로젝트 골격 (구조, 환경 설정)
+## ✅ Phase 1: 프로젝트 골격 (구조, 환경 설정)
 
 ### Phase 1 · 왜 이 순서인가?
 
@@ -78,14 +78,14 @@
 
 ### Phase 1 · 완료 기준
 
-- [ ] `.env.local` 값으로 Notion DB에 실제 접근 가능함 (Route Handler 또는 스크립트로 검증)
-- [ ] `npm run dev` 실행 시 에러 없이 구동됨
+- [x] `.env.local` 값으로 Notion DB에 실제 접근 가능함 (Route Handler 또는 스크립트로 검증)
+- [x] `npm run dev` 실행 시 에러 없이 구동됨
 - [x] `Book` 타입이 PRD의 모든 DB 속성을 완전하게 커버함
-- [ ] `npm run check-all` 통과
+- [x] `npm run check-all` 통과
 
 ---
 
-## 🧩 Phase 2: 공통 모듈 (모든 기능에서 쓰는 것들)
+## ✅ Phase 2: 공통 모듈 (모든 기능에서 쓰는 것들)
 
 ### Phase 2 · 왜 이 순서인가?
 
@@ -95,43 +95,43 @@
 
 ### Phase 2 · 세부 작업
 
-- [ ] **2-1. 책 목록 조회 함수 구현** — 🕐 1-2시간
+- [x] **2-1. 책 목록 조회 함수 구현** — 🕐 1-2시간
   - `src/lib/books.ts` 생성
   - `getBooks()`: Notion DB 쿼리 → `Book[]` 매핑
   - `getBookById(id: string)`: 단일 책 조회 (Phase 4 상세 페이지에서 활용)
   - `mapNotionPageToBook()` 헬퍼 함수
   - Notion API 실패 시 빈 배열 반환 (graceful degradation)
 
-- [ ] **2-2. 통계 계산 유틸리티** — 🕐 30분
+- [x] **2-2. 통계 계산 유틸리티** — 🕐 30분
   - `src/lib/book-stats.ts`
   - `calculateStats(books: Book[]): BookStats`
   - `BookStats` 타입: 완독/읽는중/읽을예정 권수, 평균 별점
 
-- [ ] **2-3. 상태 라벨 / 색상 매핑 헬퍼** — 🕐 20분
+- [x] **2-3. 상태 라벨 / 색상 매핑 헬퍼** — 🕐 20분
   - `src/lib/book-helpers.ts`
   - `getStatusLabel(status)`: 한글 라벨 반환
   - `getStatusVariant(status)`: shadcn Badge variant 매핑
   - `renderRating(rating)`: 별점 → 이모지/아이콘 변환
 
-- [ ] **2-4. UI 컴포넌트 재확인 및 tabs 추가** — 🕐 20분
+- [x] **2-4. UI 컴포넌트 재확인 및 tabs 추가** — 🕐 20분
   - `card.tsx`, `badge.tsx`, `skeleton.tsx`, `progress.tsx` 작동 확인
   - `npx shadcn@latest add tabs` 로 Tabs 컴포넌트 추가 (필터 탭용)
 
-- [ ] **2-5. Notion 이미지 도메인 설정** — 🕐 15분
+- [x] **2-5. Notion 이미지 도메인 설정** — 🕐 15분
   - `next.config.ts`의 `images.remotePatterns`에 Notion S3 도메인 추가
   - `prod-files-secure.s3.us-west-2.amazonaws.com`
   - `s3.us-west-2.amazonaws.com`
 
 ### Phase 2 · 완료 기준
 
-- [ ] `getBooks()` 호출 시 실제 Notion DB 데이터가 `Book[]`로 반환됨
-- [ ] `calculateStats()`가 PRD에 명시된 모든 통계 값을 정확히 계산함
-- [ ] 표지 이미지 URL을 `next/image`로 렌더링 시 에러 없음
-- [ ] `tabs` 컴포넌트가 `src/components/ui/tabs.tsx`에 존재함
+- [x] `getBooks()` 호출 시 실제 Notion DB 데이터가 `Book[]`로 반환됨
+- [x] `calculateStats()`가 PRD에 명시된 모든 통계 값을 정확히 계산함
+- [x] 표지 이미지 URL을 `next/image`로 렌더링 시 에러 없음
+- [x] `tabs` 컴포넌트가 `src/components/ui/tabs.tsx`에 존재함
 
 ---
 
-## 🚀 Phase 3: 핵심 기능 (가장 중요한 기능)
+## 🟡 Phase 3: 핵심 기능 (가장 중요한 기능)
 
 ### Phase 3 · 왜 이 순서인가?
 
@@ -141,31 +141,31 @@
 
 ### Phase 3 · 세부 작업
 
-- [ ] **3-1. 책 카드 컴포넌트** — 🕐 2-3시간
+- [x] **3-1. 책 카드 컴포넌트** — 🕐 2-3시간
   - `src/components/books/book-card.tsx` 생성
   - Props: `book: Book`
   - 표지 이미지 (`next/image`, `object-cover`, 3:4 비율), 이미지 없을 시 placeholder
   - 제목, 저자, 별점 (Lucide `Star`), 상태 Badge, 한줄요약 (`line-clamp-2`)
   - 반응형 + 다크모드 대응
 
-- [ ] **3-2. 통계 배너 컴포넌트** — 🕐 1-2시간
+- [x] **3-2. 통계 배너 컴포넌트** — 🕐 1-2시간
   - `src/components/books/stats-banner.tsx` 생성
   - Props: `stats: BookStats`
   - 완독/읽는중/읽을예정 권수, 평균 별점 표시
   - 완독률 `Progress` 바 시각화
   - Lucide 아이콘 활용: `BookOpen`, `BookCheck`, `Bookmark`, `Star`
 
-- [ ] **3-3. 필터 탭 컴포넌트** — 🕐 2시간
+- [x] **3-3. 필터 탭 컴포넌트** — 🕐 2시간
   - `src/components/books/filter-tabs.tsx` 생성 (`'use client'`)
   - shadcn `Tabs` 기반: 전체 / 읽는중 / 완독 / 읽을예정
   - URL searchParams 동기화 (`?status=reading`)
   - 각 탭에 해당 권수 뱃지 표시
 
-- [ ] **3-4. 로딩 Skeleton UI** — 🕐 30분
+- [x] **3-4. 로딩 Skeleton UI** — 🕐 30분
   - `src/components/books/book-card-skeleton.tsx`
   - 책 카드와 동일한 레이아웃의 Skeleton 버전 (9개 표시)
 
-- [ ] **3-5. 메인 페이지 조립** — 🕐 2-3시간
+- [x] **3-5. 메인 페이지 조립** — 🕐 2-3시간
   - `src/app/books/page.tsx` (서버 컴포넌트)
   - `getBooks()` 호출 → 통계 계산 → 통계 배너 렌더링
   - `<BookList />` (클라이언트 컴포넌트): 필터 탭 + 카드 그리드 주입
@@ -173,18 +173,18 @@
   - `loading.tsx`로 Skeleton, `error.tsx`로 에러 처리
   - `metadata.title`, `description` 설정
 
-- [ ] **3-6. 네비게이션에 `/books` 링크 추가** — 🕐 20분
+- [x] **3-6. 네비게이션에 `/books` 링크 추가** — 🕐 20분
   - `src/components/layout/header.tsx`에 북로그 메뉴 추가
   - 랜딩 페이지(`/`)에서 `/books`로 유도하는 CTA 추가 (선택)
 
 ### Phase 3 · 완료 기준
 
-- [ ] `/books` 페이지에 Notion DB의 모든 책이 카드로 렌더링됨
-- [ ] 필터 탭 클릭 시 즉시 해당 상태의 책만 표시되고 URL도 변경됨
-- [ ] 통계 배너의 숫자가 실제 데이터와 일치함
-- [ ] 모바일/태블릿/데스크탑에서 레이아웃이 깨지지 않음
-- [ ] 네트워크 지연 시 Skeleton이 표시됨
-- [ ] 다크모드에서도 가독성 확보
+- [x] `/books` 페이지에 Notion DB의 모든 책이 카드로 렌더링됨
+- [x] 필터 탭 클릭 시 즉시 해당 상태의 책만 표시되고 URL도 변경됨
+- [x] 통계 배너의 숫자가 실제 데이터와 일치함
+- [x] 모바일/태블릿/데스크탑에서 레이아웃이 깨지지 않음
+- [x] 네트워크 지연 시 Skeleton이 표시됨
+- [x] 다크모드에서도 가독성 확보
 - [ ] `npm run build` 성공
 
 ---
