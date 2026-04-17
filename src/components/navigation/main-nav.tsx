@@ -11,6 +11,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { title: '홈', href: '/' },
+  { title: '북로그', href: '/books' },
 ]
 
 export function MainNav() {
