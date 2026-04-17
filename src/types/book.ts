@@ -16,4 +16,5 @@ export interface BookStats {
   reading: number
   planned: number
   averageRating: number
+  ratingDistribution: Record<1 | 2 | 3 | 4 | 5, number>
 }
