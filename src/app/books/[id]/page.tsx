@@ -9,6 +9,7 @@ import { Header } from '@/components/layout/header'
 import { Footer } from '@/components/layout/footer'
 import { Container } from '@/components/layout/container'
 import { Badge } from '@/components/ui/badge'
+import { ShareButton } from '@/components/books/share-button'
 import { getBookById } from '@/lib/books'
 import { getStatusLabel, getStatusVariant } from '@/lib/book-helpers'
 
@@ -75,9 +76,12 @@ export default async function BookDetailPage({ params }: Props) {
             </div>
 
             <div className="space-y-4">
-              <Badge variant={getStatusVariant(book.status)}>
-                {getStatusLabel(book.status)}
-              </Badge>
+              <div className="flex items-center justify-between gap-3">
+                <Badge variant={getStatusVariant(book.status)}>
+                  {getStatusLabel(book.status)}
+                </Badge>
+                <ShareButton title={book.title} text={book.summary ?? ''} />
+              </div>
 
               <h1 className="text-3xl leading-tight font-bold">{book.title}</h1>
               <p className="text-muted-foreground text-lg">
