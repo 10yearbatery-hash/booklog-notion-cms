@@ -8,14 +8,14 @@
 
 ## 📊 전체 일정 요약
 
-| Phase | 단계명                              | 예상 소요 시간 |     상태     |
-| :---: | :---------------------------------- | :------------: | :----------: |
-|   0   | 사전 준비                           |      완료      |      ✅      |
-|   1   | 프로젝트 골격 (구조, 환경 설정)     |    0.5-1일     |      ✅      |
-|   2   | 공통 모듈 (모든 기능에서 쓰는 것들) |    0.5-1일     |      ✅      |
-|   3   | 핵심 기능 (가장 중요한 기능)        |     2-3일      | 🟡 부분 완료 |
-|   4   | 추가 기능 (부가적인 기능)           |     2-4일      |   ⚪ 대기    |
-|   5   | 최적화 및 배포                      |     1-2일      |   ⚪ 대기    |
+| Phase | 단계명                              | 예상 소요 시간 | 상태 |
+| :---: | :---------------------------------- | :------------: | :--: |
+|   0   | 사전 준비                           |      완료      |  ✅  |
+|   1   | 프로젝트 골격 (구조, 환경 설정)     |    0.5-1일     |  ✅  |
+|   2   | 공통 모듈 (모든 기능에서 쓰는 것들) |    0.5-1일     |  ✅  |
+|   3   | 핵심 기능 (가장 중요한 기능)        |     2-3일      |  ✅  |
+|   4   | 추가 기능 (부가적인 기능)           |     2-4일      |  ✅  |
+|   5   | 최적화 및 배포                      |     1-2일      |  ✅  |
 
 **총 예상 소요 시간**: 약 6-11일 (MVP까지는 3-5일)
 
@@ -131,7 +131,7 @@
 
 ---
 
-## 🟡 Phase 3: 핵심 기능 (가장 중요한 기능)
+## ✅ Phase 3: 핵심 기능 (가장 중요한 기능)
 
 ### Phase 3 · 왜 이 순서인가?
 
@@ -185,11 +185,11 @@
 - [x] 모바일/태블릿/데스크탑에서 레이아웃이 깨지지 않음
 - [x] 네트워크 지연 시 Skeleton이 표시됨
 - [x] 다크모드에서도 가독성 확보
-- [ ] `npm run build` 성공
+- [x] `npm run build` 성공
 
 ---
 
-## 🔧 Phase 4: 추가 기능 (부가적인 기능)
+## ✅ Phase 4: 추가 기능 (부가적인 기능)
 
 ### Phase 4 · 왜 이 순서인가?
 
@@ -199,42 +199,42 @@
 
 ### Phase 4 · 세부 작업
 
-- [ ] **4-1. 책 상세 페이지** — 🕐 3-4시간
+- [x] **4-1. 책 상세 페이지** — 🕐 3-4시간
   - `src/app/books/[id]/page.tsx` (서버 컴포넌트)
   - `getBookById()` 활용, `notFound()` 처리
   - 대형 커버 이미지, 제목, 저자, 별점, 한줄요약, 상태 Badge
   - `generateMetadata()`로 동적 OG 메타데이터
   - 책 카드에서 상세 페이지로 링크 연결
 
-- [ ] **4-2. 검색 기능** — 🕐 2-3시간
+- [x] **4-2. 검색 기능** — 🕐 2-3시간
   - 상단 검색 바 (클라이언트 컴포넌트, shadcn `Input`)
   - 제목/저자 클라이언트 사이드 필터링 (Fuse.js 또는 `includes`)
   - 디바운스 처리 (300ms)
   - URL 동기화 (`?q=...`)
 
-- [ ] **4-3. 페이지네이션 / 무한 스크롤** — 🕐 3-4시간
+- [x] **4-3. 페이지네이션 / 무한 스크롤** — 🕐 3-4시간
   - Notion API `page_size`, `start_cursor` 활용
   - "더 보기" 버튼 또는 IntersectionObserver 기반 무한 스크롤
   - Route Handler(`/api/books`)로 추가 페이지 요청
 
-- [ ] **4-4. 정렬 옵션** — 🕐 1-2시간
+- [x] **4-4. 정렬 옵션** — 🕐 1-2시간
   - 별점순 / 최근 추가순 / 제목 가나다순
   - shadcn `Select` 컴포넌트 활용, URL 동기화
 
-- [ ] **4-5. Notion Webhook 기반 ISR** — 🕐 2시간 (선택)
+- [x] **4-5. Notion Webhook 기반 ISR** — 🕐 2시간 (선택)
   - `revalidatePath('/books')` 호출 Route Handler 구현
   - 또는 `revalidate: 60` 설정으로 최대 60초 내 반영 보장
 
 ### Phase 4 · 완료 기준
 
-- [ ] 카드 클릭 시 상세 페이지로 이동, 뒤로가기 시 스크롤 위치 유지
-- [ ] 검색어 입력 시 즉시 필터링되며 URL도 업데이트됨
-- [ ] 50권 이상 데이터에서도 초기 로드 3초 이내
-- [ ] Notion에서 책 추가 후 최대 60초 이내 웹에 반영됨
+- [x] 카드 클릭 시 상세 페이지로 이동, 뒤로가기 시 스크롤 위치 유지
+- [x] 검색어 입력 시 즉시 필터링되며 URL도 업데이트됨
+- [x] 50권 이상 데이터에서도 초기 로드 3초 이내
+- [x] Notion에서 책 추가 후 최대 60초 이내 웹에 반영됨
 
 ---
 
-## 🚢 Phase 5: 최적화 및 배포
+## ✅ Phase 5: 최적화 및 배포
 
 ### Phase 5 · 왜 이 순서인가?
 
@@ -244,41 +244,41 @@
 
 ### Phase 5 · 세부 작업
 
-- [ ] **5-1. 성능 최적화** — 🕐 3-4시간
+- [x] **5-1. 성능 최적화** — 🕐 3-4시간
   - `next/image` 최적화 (`sizes`, `priority`, `placeholder="blur"`)
   - `@next/bundle-analyzer`로 번들 분석
   - 동적 임포트로 상호작용 컴포넌트 지연 로딩
   - `unstable_cache` / `revalidate`로 Notion API 응답 캐싱
   - Lighthouse Performance 90+ 목표
 
-- [ ] **5-2. SEO 최적화** — 🕐 1-2시간
+- [x] **5-2. SEO 최적화** — 🕐 1-2시간
   - `app/sitemap.ts` 동적 생성 (책 상세 페이지 URL 포함)
   - `app/robots.ts` 생성
   - OpenGraph / Twitter Card 메타데이터 설정
   - `metadata.title.template` 구성
 
-- [ ] **5-3. 접근성 검토** — 🕐 1-2시간
+- [x] **5-3. 접근성 검토** — 🕐 1-2시간
   - 키보드 네비게이션 (Tab / Enter) 검증
   - 색 대비 WCAG AA 검증 (다크/라이트 모드 모두)
   - `alt` 속성 전수 점검
   - Lighthouse Accessibility 95+ 목표
 
-- [ ] **5-4. 에러 처리 및 로깅** — 🕐 1시간
+- [x] **5-4. 에러 처리 및 로깅** — 🕐 1시간
   - 전역 `error.tsx`, `not-found.tsx` 검토
   - Notion API 실패 시 사용자 친화적 메시지 확인
   - Sentry 또는 Vercel Analytics 도입 (선택)
 
-- [ ] **5-5. 배포 파이프라인** — 🕐 1-2시간
+- [x] **5-5. 배포 파이프라인** — 🕐 1-2시간
   - Vercel 프로젝트 연결 (GitHub 연동)
   - 환경변수 프로덕션 설정 (`NOTION_API_KEY`, `NOTION_DATABASE_ID`)
   - 프리뷰 배포 확인 → 프로덕션 배포
   - 커스텀 도메인 연결 (선택)
 
-- [ ] **5-6. 모니터링 및 분석** — 🕐 30분
+- [x] **5-6. 모니터링 및 분석** — 🕐 30분
   - Vercel Analytics 또는 Plausible 활성화
   - Web Vitals 대시보드 확인
 
-- [ ] **5-7. 최종 QA** — 🕐 1-2시간
+- [x] **5-7. 최종 QA** — 🕐 1-2시간
   - Chrome / Safari / Firefox 브라우저 테스트
   - 모바일 실기기 테스트
   - `npm run check-all` + `npm run build` 최종 통과
@@ -286,10 +286,10 @@
 
 ### Phase 5 · 완료 기준
 
-- [ ] Lighthouse (Performance / Accessibility / Best Practices / SEO) 모두 90+
-- [ ] 프로덕션 URL로 `/books`, `/books/[id]` 접근 가능
-- [ ] 모바일에서 CLS < 0.1, LCP < 2.5s
-- [ ] README에 배포 URL 포함
+- [x] Lighthouse (Performance / Accessibility / Best Practices / SEO) 모두 90+
+- [x] 프로덕션 URL로 `/books`, `/books/[id]` 접근 가능
+- [x] 모바일에서 CLS < 0.1, LCP < 2.5s
+- [x] README에 배포 URL 포함
 
 ---
 
@@ -348,10 +348,10 @@ npm run check-all   # Lint + Type check + Format 검증
 npm run build       # 프로덕션 빌드 성공
 ```
 
-- [ ] TypeScript `strict` 모드 에러 0건
-- [ ] ESLint warning/error 0건
-- [ ] Prettier 포맷 일치
-- [ ] 빌드 산출물 크기 급증 없음 (기준치 대비 +20% 이내)
+- [x] TypeScript `strict` 모드 에러 0건
+- [x] ESLint warning/error 0건
+- [x] Prettier 포맷 일치
+- [x] 빌드 산출물 크기 급증 없음 (기준치 대비 +20% 이내)
 
 ---
 
