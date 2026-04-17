@@ -1,633 +1,241 @@
 {
   "tasks": [
     {
-      "id": "2c2305d3-d941-409e-9397-1f3f5d242ceb",
-      "name": "[Phase 1-1] Notion 워크스페이스 설정 및 API 키 발급",
-      "description": "Notion Integration 생성, 독서 기록 DB 구성(제목/저자/별점/상태/한줄요약/커버), NOTION_API_KEY + NOTION_DATABASE_ID 발급. 사용자 수동 작업.",
-      "notes": "코드 작업 없음. API 키 준비 후 다음 태스크 진행.",
+      "id": "2d2008b7-a508-49f5-b068-d530331b9a73",
+      "name": "T1: 타입/유틸 기반 확장 (BookStats, highlight.ts)",
+      "description": "모든 후속 작업이 의존하는 타입 확장과 유틸리티 함수를 먼저 확정합니다.\n\n1. src/types/book.ts — BookStats 인터페이스에 ratingDistribution: Record<1|2|3|4|5, number> 추가\n2. src/lib/book-stats.ts — calculateStats()에 별점별 권수 집계 로직 추가 (rating 0 제외)\n3. src/lib/highlight.ts — highlightText(text, query): ReactNode 신규 생성\n   - query 없거나 빈 문자열이면 원본 string 반환\n   - RegExp 특수문자 escape: query.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')\n   - 대소문자 무시 플래그 'gi' 사용\n   - 일치 구간을 span으로 감싸기 (bg-yellow-200 dark:bg-yellow-800 rounded-sm px-0.5)\n   - dangerouslySetInnerHTML 절대 금지, React.ReactNode 반환",
+      "notes": "highlight.ts는 React import 필요 ('react' from 'react'). BookStats 타입 확장 후 TypeScript 컴파일 에러가 stats-banner.tsx에서 발생할 수 있으므로 T5 전에 반드시 완료.",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T09:41:22.169Z",
-      "relatedFiles": [
-        {
-          "path": "docs/PRD.md",
-          "type": "REFERENCE",
-          "description": "DB 속성 명세"
-        }
-      ],
-      "implementationGuide": "1. https://www.notion.so/my-integrations 에서 Integration 생성\n2. Notion DB 생성 및 속성 구성: 제목(Title), 저자(Text), 별점(Select: ⭐1~⭐5), 상태(Select: 읽는중/완독/읽을예정), 한줄요약(Text), 커버(Files & media)\n3. DB에 Integration 연결 (... > Connections)\n4. Token 복사 = NOTION_API_KEY, DB URL에서 ID 추출 = NOTION_DATABASE_ID\n5. 테스트 책 데이터 1건 이상 입력",
-      "verificationCriteria": "NOTION_API_KEY, NOTION_DATABASE_ID 준비 완료. DB에 테스트 데이터 1건 이상 존재.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API.",
-      "summary": "사용자가 Notion Integration 생성, 독서 기록 DB 속성 구성(제목/저자/별점/상태/한줄요약/커버), Integration 연결, NOTION_API_KEY 및 NOTION_DATABASE_ID 발급까지 모든 수동 작업을 완료함.",
-      "completedAt": "2026-04-17T09:41:22.157Z"
-    },
-    {
-      "id": "46818b53-2542-4c22-937e-b1fb79d6e1be",
-      "name": "[Phase 1-2~1-3] 환경변수 설정 및 Notion 클라이언트 초기화",
-      "description": ".env.local + .env.example + src/lib/env.ts Zod 스키마 동시 수정. @notionhq/client 설치. src/lib/notion.ts 싱글톤 생성(import server-only).",
-      "notes": ".env.local은 .gitignore 확인. env.ts 미수정 상태로 process.env 직접 접근 금지.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "2c2305d3-d941-409e-9397-1f3f5d242ceb"
-        }
-      ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T09:45:23.755Z",
-      "relatedFiles": [
-        {
-          "path": ".env.local",
-          "type": "CREATE",
-          "description": "실제 환경변수"
-        },
-        {
-          "path": ".env.example",
-          "type": "CREATE",
-          "description": "템플릿"
-        },
-        {
-          "path": "src/lib/env.ts",
-          "type": "TO_MODIFY",
-          "description": "Zod 스키마 확장"
-        },
-        {
-          "path": "src/lib/notion.ts",
-          "type": "CREATE",
-          "description": "Notion 싱글톤 클라이언트"
-        }
-      ],
-      "implementationGuide": "1. .env.local: NOTION_API_KEY=secret_xxx, NOTION_DATABASE_ID=xxx\n2. .env.example: 빈값 템플릿\n3. src/lib/env.ts Zod 스키마에 NOTION_API_KEY: z.string().min(1), NOTION_DATABASE_ID: z.string().min(1) 추가\n4. npm install @notionhq/client\n5. src/lib/notion.ts: import 'server-only', Client 싱글톤, DATABASE_ID export",
-      "verificationCriteria": "npm run dev 에러 없음. npm run check-all 통과.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API.",
-      "summary": "env.ts Zod 스키마에 NOTION_API_KEY/NOTION_DATABASE_ID 추가, @notionhq/client + server-only 설치, src/lib/notion.ts 싱글톤 생성 완료. npm run check-all 통과.",
-      "completedAt": "2026-04-17T09:45:23.751Z"
-    },
-    {
-      "id": "91eec2f1-4648-45f4-9e26-5d4c389ca5ec",
-      "name": "[Phase 1-4] 도메인 타입 정의",
-      "description": "src/types/book.ts 생성. BookStatus 유니언, Book 인터페이스, BookStats 인터페이스 정의.",
-      "notes": "Notion 원본 타입(PageObjectResponse) import 금지. 순수 도메인 타입만 정의.",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "46818b53-2542-4c22-937e-b1fb79d6e1be"
-        }
-      ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T09:45:53.671Z",
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T15:53:31.993Z",
       "relatedFiles": [
         {
           "path": "src/types/book.ts",
-          "type": "CREATE",
-          "description": "도메인 타입"
-        }
-      ],
-      "implementationGuide": "src/types/book.ts:\n- BookStatus = 'reading' | 'completed' | 'planned'\n- Book: id, title, author, rating(number 1-5), status(BookStatus), summary, coverUrl(string|null)\n- BookStats: total, completed, reading, planned, averageRating",
-      "verificationCriteria": "PRD의 모든 DB 속성 커버. TypeScript strict 에러 0건.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API.",
-      "summary": "src/types/book.ts 생성 완료. BookStatus 유니언, Book 인터페이스(id/title/author/rating/status/summary/coverUrl), BookStats 인터페이스(total/completed/reading/planned/averageRating) 정의. TypeScript strict 에러 0건, check-all 통과.",
-      "completedAt": "2026-04-17T09:45:53.669Z"
-    },
-    {
-      "id": "239de6fa-36f1-4600-a9a7-5c8016f9183b",
-      "name": "[Phase 2-1~2-3] 데이터 레이어 구현",
-      "description": "src/lib/books.ts(getBooks/getBookById/mapNotionPageToBook), src/lib/book-stats.ts(calculateStats), src/lib/book-helpers.ts(getStatusLabel/getStatusVariant/getRatingStars) 구현.",
-      "notes": "books.ts에 import 'server-only' 필수. Notion Select 별점 파싱 주의.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "91eec2f1-4648-45f4-9e26-5d4c389ca5ec"
-        }
-      ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T08:02:59.837Z",
-      "relatedFiles": [
-        {
-          "path": "src/lib/books.ts",
-          "type": "CREATE",
-          "description": "데이터 페칭"
+          "type": "TO_MODIFY",
+          "description": "BookStats에 ratingDistribution 필드 추가"
         },
         {
           "path": "src/lib/book-stats.ts",
-          "type": "CREATE",
-          "description": "통계 계산"
+          "type": "TO_MODIFY",
+          "description": "calculateStats에 별점 분포 집계 추가"
         },
         {
-          "path": "src/lib/book-helpers.ts",
+          "path": "src/lib/highlight.ts",
           "type": "CREATE",
-          "description": "헬퍼 함수"
+          "description": "검색어 하이라이트 헬퍼 함수 신규 생성"
         }
       ],
-      "implementationGuide": "books.ts: import 'server-only'. mapNotionPageToBook으로 Notion 응답→Book 변환(별점 Select값 파싱: '⭐1'→1). getBooks(): try/catch, 실패시 [] 반환. getBookById(): 실패시 null.\nbook-stats.ts: calculateStats로 상태별 카운트+평균별점.\nbook-helpers.ts: getStatusLabel(reading→읽는중 등), getStatusVariant(Badge variant), getRatingStars(숫자→★).",
-      "verificationCriteria": "getBooks() 실제 Notion 데이터 반환. calculateStats() 정확한 통계. npm run check-all 통과.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API."
+      "implementationGuide": "// types/book.ts\ninterface BookStats {\n  ...기존 필드...\n  ratingDistribution: Record<1|2|3|4|5, number>\n}\n\n// book-stats.ts calculateStats()\nconst ratingDistribution = {1:0,2:0,3:0,4:0,5:0}\nbooks.filter(b => b.rating >= 1 && b.rating <= 5)\n     .forEach(b => ratingDistribution[b.rating]++)\nreturn { ...기존, ratingDistribution }\n\n// highlight.ts\nexport function highlightText(text, query): ReactNode {\n  if (!query.trim()) return text\n  const escaped = query.replace(특수문자 regex)\n  const parts = text.split(new RegExp(`(${escaped})`, 'gi'))\n  return parts.map((part, i) =>\n    i % 2 === 1 ? <span key={i} className=\"bg-yellow-200...\"> {part} </span> : part\n  )\n}",
+      "verificationCriteria": "1. TypeScript strict 모드에서 BookStats 타입 오류 없음\n2. calculateStats 반환값에 ratingDistribution 포함 확인\n3. highlightText('안녕 세계', '세계')가 span으로 감싼 ReactNode 반환\n4. highlightText('test', '')가 원본 string 반환\n5. highlightText('price$1.00', '$')가 RegExp 오류 없이 동작\n6. npm run check-all 통과",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T1 타입/유틸 기반 확장 완료. BookStats에 ratingDistribution: Record<1|2|3|4|5, number> 추가, calculateStats()에 별점 1~5 집계 로직 (rating 0 제외) 구현, src/lib/highlight.ts 신규 생성 (RegExp 특수문자 escape, gi 플래그, mark 태그로 감싸기, dangerouslySetInnerHTML 미사용). npm run check-all 및 npm run build 통과. /books 페이지 HTML 정상 렌더링 확인.",
+      "completedAt": "2026-04-17T15:53:31.987Z"
     },
     {
-      "id": "fbd72498-5a9a-4b67-8c4d-a3ec16cee934",
-      "name": "[Phase 2-4~2-5] Tabs 컴포넌트 추가 및 이미지 도메인 설정",
-      "description": "npx shadcn@latest add tabs 설치. next.config.ts에 Notion S3 이미지 도메인 remotePatterns 추가.",
-      "status": "pending",
+      "id": "b8c56f50-1a1e-4083-93f9-64eecc034ba6",
+      "name": "T2: BookListItem + Skeleton 신규 생성",
+      "description": "리스트 뷰 아이템 컴포넌트를 생성합니다. searchQuery prop을 처음부터 포함하여 이후 하이라이트 작업(T3 이후 BookList에서 전파)을 별도 수정 없이 수용합니다.\n\n1. src/components/books/book-list-item.tsx — 가로 레이아웃 리스트 아이템\n   - Props: { book: Book, priority?: boolean, searchQuery?: string }\n   - 좌측: next/image 썸네일 (3:4 비율, 너비 72px, objectFit cover)\n   - 우측: highlightText로 제목/저자 렌더링, Star 별점, Badge 상태, 한줄요약 line-clamp-1\n   - Link → /books/{book.id}, hover:shadow, 다크모드 대응\n\n2. src/components/books/book-list-item-skeleton.tsx — 동일 레이아웃 Skeleton\n   - 썸네일 영역 Skeleton + 텍스트 라인 3개 Skeleton",
+      "notes": "highlight.ts(T1)가 반드시 먼저 완료되어야 import 가능. book-card.tsx의 기존 Image/Star 패턴 참고.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "239de6fa-36f1-4600-a9a7-5c8016f9183b"
+          "taskId": "2d2008b7-a508-49f5-b068-d530331b9a73"
         }
       ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T08:02:59.837Z",
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T15:54:21.730Z",
       "relatedFiles": [
         {
-          "path": "src/components/ui/tabs.tsx",
+          "path": "src/components/books/book-list-item.tsx",
           "type": "CREATE",
-          "description": "shadcn Tabs"
+          "description": "리스트 뷰 아이템 컴포넌트 (searchQuery 선탑재)"
         },
         {
-          "path": "next.config.ts",
-          "type": "TO_MODIFY",
-          "description": "이미지 도메인 추가"
+          "path": "src/components/books/book-list-item-skeleton.tsx",
+          "type": "CREATE",
+          "description": "리스트 뷰 스켈레톤"
+        },
+        {
+          "path": "src/components/books/book-card.tsx",
+          "type": "REFERENCE",
+          "description": "Image/Star/Badge 패턴 참고"
+        },
+        {
+          "path": "src/lib/highlight.ts",
+          "type": "DEPENDENCY",
+          "description": "highlightText 함수 import"
         }
       ],
-      "implementationGuide": "1. npx shadcn@latest add tabs\n2. next.config.ts images.remotePatterns에 추가:\n   { protocol: 'https', hostname: 'prod-files-secure.s3.us-west-2.amazonaws.com' }\n   { protocol: 'https', hostname: 's3.us-west-2.amazonaws.com' }\n   기존 formats, poweredByHeader 등 설정 유지",
-      "verificationCriteria": "tabs.tsx 존재. next.config.ts에 S3 도메인 2개 추가. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API."
+      "implementationGuide": "// book-list-item.tsx\nimport { highlightText } from '@/lib/highlight'\ninterface BookListItemProps { book: Book; priority?: boolean; searchQuery?: string }\nexport function BookListItem({ book, priority=false, searchQuery='' }) {\n  return (\n    <Link href={`/books/${book.id}`}>\n      <div className=\"flex gap-3 rounded-lg border p-3 hover:shadow-sm transition\">\n        <div className=\"relative w-[72px] shrink-0 aspect-[3/4]\">\n          {book.coverUrl ? <Image fill .../> : <span>📚</span>}\n        </div>\n        <div className=\"flex flex-col gap-1 min-w-0\">\n          <h3>{highlightText(book.title, searchQuery)}</h3>\n          <p>{highlightText(book.author, searchQuery)}</p>\n          <별점 Star 렌더링 />\n          <Badge>{getStatusLabel(book.status)}</Badge>\n          {book.summary && <p className=\"line-clamp-1\">{book.summary}</p>}\n        </div>\n      </div>\n    </Link>\n  )\n}",
+      "verificationCriteria": "1. BookListItem이 book prop만으로 렌더링 가능 (searchQuery 미전달 시 기존 동작)\n2. searchQuery 전달 시 제목/저자 하이라이트 표시\n3. coverUrl null 시 📚 placeholder 표시\n4. BookListItemSkeleton이 BookListItem과 동일한 레이아웃 유지\n5. TypeScript strict 오류 없음",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T2 BookListItem + Skeleton 신규 생성 완료. 가로 레이아웃(좌측 72px 썸네일, 우측 정보 영역), searchQuery prop 선탑재(T4 완료 시 자동 활성화), highlightText 함수 통합, coverUrl null 시 📚 placeholder, hover shadow 및 다크모드 지원. BookListItemSkeleton은 동일 레이아웃(썸네일 + 타이틀/Badge 행 + 저자/별점/요약 라인)으로 구현. TypeScript strict 모드 통과, ESLint/Prettier 통과.",
+      "completedAt": "2026-04-17T15:54:21.727Z"
     },
     {
-      "id": "2921433e-f528-4276-8685-6e07883b12e8",
-      "name": "[Phase 3-1~3-2] 책 카드 및 통계 배너 컴포넌트",
-      "description": "src/components/books/book-card.tsx(서버 컴포넌트, next/image 3:4비율, 다크모드), src/components/books/stats-banner.tsx(BookStats props, Progress 바, Lucide 아이콘) 구현.",
-      "notes": "book-card.tsx는 서버 컴포넌트 유지. Phase 4-1에서 Link 래퍼 추가 예정.",
-      "status": "pending",
+      "id": "0e05a08f-7e35-4946-85e4-a00e7b780609",
+      "name": "T3: BookCard searchQuery prop 추가",
+      "description": "기존 BookCard에 searchQuery?: string prop을 추가하고 highlightText를 적용합니다. T2와 병렬 진행 가능.\n\n- src/components/books/book-card.tsx 수정\n- Props: { book: Book, priority?: boolean, searchQuery?: string } (searchQuery 추가)\n- 제목(h3)과 저자(p) 렌더링을 highlightText(text, searchQuery ?? '') 로 교체\n- searchQuery 미전달 시 기존 동작 완전 유지 (하위 호환)",
+      "notes": "파일 전체 재작성 금지 — 위 2곳만 수정. highlight.ts(T1) 완료 후 진행.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "fbd72498-5a9a-4b67-8c4d-a3ec16cee934"
+          "taskId": "2d2008b7-a508-49f5-b068-d530331b9a73"
         }
       ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T08:02:59.837Z",
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T15:54:58.038Z",
       "relatedFiles": [
         {
           "path": "src/components/books/book-card.tsx",
-          "type": "CREATE",
-          "description": "책 카드"
+          "type": "TO_MODIFY",
+          "description": "searchQuery prop 추가 및 highlightText 적용"
         },
+        {
+          "path": "src/lib/highlight.ts",
+          "type": "DEPENDENCY",
+          "description": "highlightText 함수 import"
+        }
+      ],
+      "implementationGuide": "// book-card.tsx diff\nimport { highlightText } from '@/lib/highlight'\ninterface BookCardProps { book: Book; priority?: boolean; searchQuery?: string }\n\n// 제목 렌더링\n<h3>{highlightText(book.title || '제목 없음', searchQuery ?? '')}</h3>\n// 저자 렌더링\n<p>{highlightText(book.author || '저자 미상', searchQuery ?? '')}</p>",
+      "verificationCriteria": "1. searchQuery 없이 호출 시 기존과 동일한 렌더링\n2. searchQuery 전달 시 제목/저자 강조 표시\n3. 기존 BookList, books/page.tsx에서 BookCard 호출 코드 수정 불필요 (선택적 prop이므로)\n4. TypeScript strict 오류 없음",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T3 BookCard searchQuery prop 추가 완료. Props에 searchQuery?: string 선택적 필드 추가, 제목과 저자 렌더링을 highlightText(text, searchQuery)로 교체. searchQuery 기본값 ''로 하위 호환 보장 — 기존 호출(searchQuery 미전달)에서 highlightText가 빈 query로 원본 반환하므로 동작 변화 없음. check-all 통과.",
+      "completedAt": "2026-04-17T15:54:58.033Z"
+    },
+    {
+      "id": "cc05739d-a2da-4c70-bac4-c9c02895773b",
+      "name": "T4: BookList 한 번에 완성 (뷰 토글 + 랜덤 추천 + searchQuery 전파)",
+      "description": "book-list.tsx를 단 1회 수정으로 3가지 기능(F001 뷰 토글, F003 랜덤 추천, F004 searchQuery 전파)을 모두 완성합니다.\n\n추가 내용:\n1. URL param view=grid|list 파싱 (기본값 'grid')\n2. LayoutGrid/List Lucide 아이콘 토글 버튼\n3. view 변경 시 visibleCount 리셋 (useEffect deps에 view 추가)\n4. 뷰 모드 분기: grid → BookCard, list → BookListItem\n5. Skeleton도 뷰 모드별 분기: BookCardSkeleton vs BookListItemSkeleton\n6. Shuffle 아이콘 랜덤 추천 버튼: filtered 배열 기준 random index → router.push\n7. filtered 0건 시 랜덤 추천 버튼 disabled\n8. BookCard, BookListItem 모두에 searchQuery={q} prop 전달\n9. 컨트롤 영역 flex-wrap 반응형 정리",
+      "notes": "import 추가: BookListItem, BookListItemSkeleton, LayoutGrid, List, Shuffle 아이콘. 기존 Loader2, Search 유지.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "b8c56f50-1a1e-4083-93f9-64eecc034ba6"
+        },
+        {
+          "taskId": "0e05a08f-7e35-4946-85e4-a00e7b780609"
+        }
+      ],
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T15:56:36.114Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/books/book-list.tsx",
+          "type": "TO_MODIFY",
+          "description": "뷰 토글 + 랜덤 추천 + searchQuery 전파 한 번에 작성"
+        },
+        {
+          "path": "src/components/books/book-list-item.tsx",
+          "type": "DEPENDENCY",
+          "description": "리스트 뷰 렌더링"
+        },
+        {
+          "path": "src/components/books/book-list-item-skeleton.tsx",
+          "type": "DEPENDENCY",
+          "description": "리스트 뷰 스켈레톤"
+        },
+        {
+          "path": "src/components/books/book-card.tsx",
+          "type": "DEPENDENCY",
+          "description": "그리드 뷰 렌더링"
+        }
+      ],
+      "implementationGuide": "// 추가 state/상수\ntype ViewMode = 'grid' | 'list'\nconst view = (searchParams.get('view') ?? 'grid') as ViewMode\n\n// handleViewChange\nparams.set('view', value); router.push(...)\n\n// useEffect deps 수정\nuseEffect(() => { setVisibleCount(PAGE_SIZE) }, [status, q, sort, view])\n\n// handleRandomPick\nif (filtered.length === 0) return\nconst pick = filtered[Math.floor(Math.random() * filtered.length)]\nrouter.push(`/books/${pick.id}`)\n\n// 렌더링 분기\n{view === 'grid'\n  ? <div className=\"grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6\">\n      {visible.map((book, idx) => <BookCard key={book.id} book={book} priority={idx<3} searchQuery={q} />)}\n    </div>\n  : <div className=\"flex flex-col gap-3\">\n      {visible.map((book, idx) => <BookListItem key={book.id} book={book} priority={idx<3} searchQuery={q} />)}\n    </div>\n}\n\n// 컨트롤 영역\n<div className=\"flex flex-wrap gap-2 items-center\">\n  <SearchInput /> <SortSelect /> <ViewToggle /> <RandomButton />\n</div>",
+      "verificationCriteria": "1. ?view=list 접근 시 BookListItem 렌더링\n2. ?view=grid 또는 파라미터 없음 시 BookCard 그리드 렌더링\n3. 뷰 전환 시 URL 업데이트, 새로고침 후 모드 유지\n4. 뷰 전환 시 visibleCount 리셋 (무한 스크롤 초기화)\n5. 랜덤 추천 버튼 클릭 시 현재 필터 결과 내 책 상세 페이지로 이동\n6. filtered 0건 시 랜덤 버튼 disabled\n7. 검색어 입력 시 그리드/리스트 양쪽 모두 하이라이트 표시\n8. 모바일에서 컨트롤 영역 겹침 없음\n9. npm run check-all 통과",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T4 BookList 단 1회 수정으로 3기능 통합 완료. (1) URL ?view=grid|list 파싱, LayoutGrid/List 토글 버튼(aria-label, aria-pressed). (2) view 변경 시 visibleCount 리셋 (deps에 view 추가). (3) grid→BookCard / list→BookListItem 렌더링 분기, Skeleton도 뷰별 분기. (4) Shuffle 랜덤 추천 버튼 — filtered 0건 시 disabled, 클릭 시 Loader2 스피너 표시 후 router.push. (5) 양쪽 컴포넌트에 searchQuery={q} 전달. (6) 컨트롤 영역 flex-wrap 반응형 정리. check-all 통과, SSR 응답에서 view=list + q=주식 조합 시 mark 태그 하이라이트 확인.",
+      "completedAt": "2026-04-17T15:56:36.111Z"
+    },
+    {
+      "id": "b8331bab-0990-4999-8e18-eebe0d39da3d",
+      "name": "T5: StatsBanner 별점 분포 차트",
+      "description": "통계 배너에 별점 1~5 분포 차트를 추가합니다. T1에서 BookStats 타입이 확장되었으므로 stats-banner.tsx만 수정하면 됩니다.\n\n- 기존 배너 하단에 구분선 + 별점 분포 섹션 추가\n- 각 행: ⭐숫자 + Progress 바(기존 컴포넌트 재사용) + 권수 텍스트\n- Progress 너비: 해당 별점 권수 / max(ratingDistribution 값들) * 100\n- 별점 데이터 0건 시 빈 상태 처리 ('별점 데이터 없음' 안내)\n- aria-label 접근성 속성 부여",
+      "notes": "T1 완료 후 진행 (BookStats 타입 확장 필요). T4와 병렬 진행 가능.",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "2d2008b7-a508-49f5-b068-d530331b9a73"
+        }
+      ],
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T15:57:27.272Z",
+      "relatedFiles": [
         {
           "path": "src/components/books/stats-banner.tsx",
-          "type": "CREATE",
-          "description": "통계 배너"
+          "type": "TO_MODIFY",
+          "description": "별점 분포 차트 섹션 추가"
         },
         {
-          "path": "src/components/ui/card.tsx",
+          "path": "src/types/book.ts",
           "type": "DEPENDENCY",
-          "description": "재사용"
-        },
-        {
-          "path": "src/components/ui/badge.tsx",
-          "type": "DEPENDENCY",
-          "description": "재사용"
-        },
-        {
-          "path": "src/components/ui/progress.tsx",
-          "type": "DEPENDENCY",
-          "description": "재사용"
+          "description": "BookStats.ratingDistribution 타입"
         }
       ],
-      "implementationGuide": "book-card.tsx(서버 컴포넌트): next/image aspect-[3/4] object-cover, coverUrl null시 BookOpen placeholder, Badge(getStatusVariant), getRatingStars, line-clamp-2 summary, dark: 클래스.\nstats-banner.tsx: grid-cols-2 sm:grid-cols-4, BookOpen/BookCheck/Bookmark/Star 아이콘, Progress로 완독률.",
-      "verificationCriteria": "다크모드 가독성 확인. coverUrl null 시 placeholder. npm run check-all 통과.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API."
+      "implementationGuide": "// stats-banner.tsx 하단 섹션 추가\nconst maxCount = Math.max(...Object.values(stats.ratingDistribution), 1)\n\n<div className=\"mt-5 border-t pt-4\">\n  <p className=\"text-xs text-muted-foreground mb-2\">별점 분포</p>\n  {([5,4,3,2,1] as const).map(star => (\n    <div key={star} className=\"flex items-center gap-2 mb-1\">\n      <span className=\"text-xs w-4\">{star}</span>\n      <Star className=\"h-3 w-3 fill-yellow-400 text-yellow-400\" />\n      <Progress\n        value={(stats.ratingDistribution[star] / maxCount) * 100}\n        className=\"h-1.5 flex-1\"\n        aria-label={`별점 ${star}점 ${stats.ratingDistribution[star]}권`}\n      />\n      <span className=\"text-xs text-muted-foreground w-4 text-right\">\n        {stats.ratingDistribution[star]}\n      </span>\n    </div>\n  ))}\n</div>",
+      "verificationCriteria": "1. 실제 Notion 데이터와 별점 분포 수치 일치\n2. 전체 별점 0건 시 빈 상태 표시\n3. Progress 바 비율이 최대값 기준으로 정확히 계산\n4. 다크모드에서 가독성 확보\n5. aria-label 속성 존재 확인\n6. TypeScript strict 오류 없음",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T5 StatsBanner 별점 분포 차트 완료. 기존 배너 하단에 구분선 + \"별점 분포\" 섹션 추가. 5점→1점 내림차순 ul/li 구조로 접근성 보장. 각 행: 숫자+별 아이콘 + Progress 바(비율 = count/maxCount*100) + 권수 텍스트. 빈 상태(totalRated===0) 시 \"별점이 등록된 책이 없습니다\" 안내. Progress에 aria-label 부여. SSR 응답에서 \"별점 1점 1권\" 등 5개 별점 레이블 + \"별점 분포\" 헤더 확인. check-all 통과.",
+      "completedAt": "2026-04-17T15:57:27.270Z"
     },
     {
-      "id": "46e19e49-b9b5-44f2-a215-894f32ced167",
-      "name": "[Phase 3-3~3-4] 필터 탭, BookList, Skeleton UI 컴포넌트",
-      "description": "filter-tabs.tsx('use client', Tabs+URL동기화), book-list.tsx(클라이언트 컨테이너), book-card-skeleton.tsx 구현.",
-      "notes": "useSearchParams는 Suspense 경계 필요 — loading.tsx가 처리.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "2921433e-f528-4276-8685-6e07883b12e8"
-        }
-      ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T08:02:59.837Z",
+      "id": "2283634d-2dfa-423e-9e62-8ae4108afe1d",
+      "name": "T6: ShareButton + 상세 페이지 통합",
+      "description": "상세 페이지 전용 공유 버튼을 구현합니다. 메인 목록과 완전 독립적이므로 T1~T5와 병렬 진행 가능.\n\n1. src/components/books/share-button.tsx 신규 생성 ('use client')\n   - Props: { title: string, text?: string }\n   - 클라이언트 컴포넌트 내에서 window.location.href로 URL 자체 획득 (서버 props 불필요)\n   - navigator.share 지원 여부: typeof navigator !== 'undefined' && 'share' in navigator\n   - 지원 시: navigator.share({ title, text, url: window.location.href })\n   - 미지원 시: navigator.clipboard.writeText(window.location.href)\n   - copied state: 2초간 Check 아이콘 표시 후 Share2로 복귀\n   - AbortError(사용자 취소) silent 처리\n\n2. src/app/books/[id]/page.tsx 수정\n   - 제목 옆 또는 상태 Badge 아래에 ShareButton 배치\n   - Props: title={book.title} text={book.summary || ''}",
+      "notes": "window.location.href는 클라이언트 컴포넌트에서만 사용 가능 — 'use client' 필수. HTTPS 환경에서만 clipboard API 동작 (localhost는 예외).",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T15:58:54.973Z",
       "relatedFiles": [
         {
-          "path": "src/components/books/filter-tabs.tsx",
+          "path": "src/components/books/share-button.tsx",
           "type": "CREATE",
-          "description": "필터 탭"
-        },
-        {
-          "path": "src/components/books/book-list.tsx",
-          "type": "CREATE",
-          "description": "북 리스트 컨테이너"
-        },
-        {
-          "path": "src/components/books/book-card-skeleton.tsx",
-          "type": "CREATE",
-          "description": "Skeleton UI"
-        }
-      ],
-      "implementationGuide": "filter-tabs.tsx('use client'): shadcn Tabs, useSearchParams+useRouter로 ?status= 동기화, 탭별 권수 Badge.\nbook-list.tsx('use client'): props { books: Book[], stats: BookStats }, 필터링 로직, grid-cols-1 sm:grid-cols-2 lg:grid-cols-3.\nbook-card-skeleton.tsx: BookCard 동일 레이아웃 Skeleton, 9개 표시용.",
-      "verificationCriteria": "탭 클릭 시 URL ?status= 변경. 필터링 정상. Skeleton 레이아웃 일치. npm run check-all 통과.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API."
-    },
-    {
-      "id": "6ce56e99-21d3-48aa-959b-60e0d42ae98d",
-      "name": "[Phase 3-5~3-6] 메인 페이지 조립 및 네비게이션 연결",
-      "description": "src/app/books/page.tsx(서버, async, metadata), loading.tsx, error.tsx 생성. main-nav.tsx + mobile-nav.tsx 동시 /books 링크 추가.",
-      "notes": "두 nav 파일 반드시 동시 수정.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "46e19e49-b9b5-44f2-a215-894f32ced167"
-        }
-      ],
-      "createdAt": "2026-04-17T08:02:59.837Z",
-      "updatedAt": "2026-04-17T08:02:59.837Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/books/page.tsx",
-          "type": "CREATE",
-          "description": "메인 페이지"
-        },
-        {
-          "path": "src/app/books/loading.tsx",
-          "type": "CREATE",
-          "description": "로딩 UI"
-        },
-        {
-          "path": "src/app/books/error.tsx",
-          "type": "CREATE",
-          "description": "에러 UI"
-        },
-        {
-          "path": "src/components/navigation/main-nav.tsx",
-          "type": "TO_MODIFY",
-          "description": "/books 링크"
-        },
-        {
-          "path": "src/components/navigation/mobile-nav.tsx",
-          "type": "TO_MODIFY",
-          "description": "/books 링크"
-        }
-      ],
-      "implementationGuide": "page.tsx: async 서버 컴포넌트, getBooks()+calculateStats(), StatsBanner+BookList 렌더링, Container 래핑, metadata 설정, export const revalidate는 Phase 4-5에서 추가.\nloading.tsx: StatsBanner skeleton + BookCardSkeleton 9개.\nerror.tsx('use client'): 에러 메시지 + 새로고침 버튼.\nmain-nav.tsx + mobile-nav.tsx 동시 수정: 북로그 링크 추가.",
-      "verificationCriteria": "/books 실제 데이터 렌더링. 반응형 레이아웃 정상. Skeleton 표시. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Notion CMS 기반 독서 기록 쇼케이스. Phase 1~5 순서 엄수. Next.js 15.5.3 App Router + React 19 + TypeScript strict + TailwindCSS v4 + shadcn/ui(new-york) + Notion API."
-    },
-    {
-      "id": "ba21f2c5-0f03-4d43-9972-1d55bfdb222a",
-      "name": "[Phase 4-1] 책 상세 페이지",
-      "description": "src/app/books/[id]/page.tsx 구현. generateMetadata로 동적 OG 메타데이터, getBookById+notFound(), 대형 커버/제목/저자/별점/상태/요약 표시. book-card.tsx에 Link 래퍼 추가.",
-      "notes": "book-card.tsx 수정 시 기존 서버 컴포넌트 구조(use client 없음) 유지 필수.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "6ce56e99-21d3-48aa-959b-60e0d42ae98d"
-        }
-      ],
-      "createdAt": "2026-04-17T08:03:40.267Z",
-      "updatedAt": "2026-04-17T08:03:40.267Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/books/[id]/page.tsx",
-          "type": "CREATE",
-          "description": "책 상세 페이지"
-        },
-        {
-          "path": "src/components/books/book-card.tsx",
-          "type": "TO_MODIFY",
-          "description": "Link 래퍼 추가"
-        }
-      ],
-      "implementationGuide": "src/app/books/[id]/page.tsx(서버 컴포넌트):\n- generateMetadata({ params }): OG title/description/image\n- getBookById(params.id) → null이면 notFound()\n- 레이아웃: 좌측 대형 커버(next/image), 우측 제목/저자/Badge/별점/요약\n- Container 컴포넌트 래핑\n\nbook-card.tsx 수정:\n- Card 전체를 next/link Link로 래핑 (href=/books/[book.id])\n- 서버 컴포넌트 구조 유지",
-      "verificationCriteria": "카드 클릭 시 상세 페이지 이동. notFound() 동작 확인. OG 메타데이터 설정. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Phase 4 추가 기능 — Phase 3 완료 후 진행. 각 태스크는 순차 의존."
-    },
-    {
-      "id": "0dee23ce-a500-4892-ad8c-ca024961f661",
-      "name": "[Phase 4-2] 검색 기능",
-      "description": "src/components/books/book-search.tsx 구현('use client', shadcn Input, 300ms 디바운스, URL ?q= 동기화). book-list.tsx에 검색 필터링 통합.",
-      "notes": "디바운스는 useRef로 타이머 관리. 검색+필터 동시 적용 시 AND 조건.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "ba21f2c5-0f03-4d43-9972-1d55bfdb222a"
-        }
-      ],
-      "createdAt": "2026-04-17T08:03:40.267Z",
-      "updatedAt": "2026-04-17T08:03:40.267Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/books/book-search.tsx",
-          "type": "CREATE",
-          "description": "검색 컴포넌트"
-        },
-        {
-          "path": "src/components/books/book-list.tsx",
-          "type": "TO_MODIFY",
-          "description": "검색 통합"
-        }
-      ],
-      "implementationGuide": "book-search.tsx('use client'):\n- shadcn Input 컴포넌트 사용\n- useSearchParams+useRouter로 ?q= URL 동기화\n- useCallback + setTimeout 300ms 디바운스\n- 검색어 클리어 버튼(X 아이콘)\n\nbook-list.tsx 수정:\n- props에 initialQuery 추가\n- books를 title+author includes(query) 필터링\n- BookSearch + FilterTabs + 그리드 순서로 배치",
-      "verificationCriteria": "검색 입력 시 300ms 후 필터링. URL ?q= 동기화. 검색+상태 필터 동시 동작. npm run check-all 통과.",
-      "analysisResult": "북로그(BookLog) Phase 4 추가 기능 — Phase 3 완료 후 진행. 각 태스크는 순차 의존."
-    },
-    {
-      "id": "f9f6061b-dc05-4a43-a835-58be59e05315",
-      "name": "[Phase 4-3] 페이지네이션 / 무한 스크롤",
-      "description": "src/app/api/books/route.ts Route Handler 구현(Notion page_size+start_cursor). book-list.tsx에 IntersectionObserver 기반 무한 스크롤 또는 더보기 버튼 추가.",
-      "notes": "Route Handler는 서버 전용이므로 notion.ts import 가능. 클라이언트에서 직접 notion import 금지.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "0dee23ce-a500-4892-ad8c-ca024961f661"
-        }
-      ],
-      "createdAt": "2026-04-17T08:03:40.267Z",
-      "updatedAt": "2026-04-17T08:03:40.267Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/api/books/route.ts",
-          "type": "CREATE",
-          "description": "페이지네이션 API"
-        },
-        {
-          "path": "src/components/books/book-list.tsx",
-          "type": "TO_MODIFY",
-          "description": "무한 스크롤 추가"
-        }
-      ],
-      "implementationGuide": "src/app/api/books/route.ts:\n- GET 핸들러: ?cursor= 파라미터로 Notion start_cursor 활용\n- notion.databases.query({ page_size: 12, start_cursor: cursor })\n- 응답: { books: Book[], nextCursor: string|null }\n\nbook-list.tsx 수정:\n- useState로 books 상태 관리, 초기값은 props\n- IntersectionObserver로 하단 sentinel 감지\n- 감지 시 /api/books?cursor= 호출하여 books append\n- 로딩 스피너 표시",
-      "verificationCriteria": "스크롤 하단 도달 시 추가 책 로드. 마지막 페이지에서 로딩 중단. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Phase 4 추가 기능 — Phase 3 완료 후 진행. 각 태스크는 순차 의존."
-    },
-    {
-      "id": "7d8d3b18-7494-4a3f-908b-f709dafb3cc5",
-      "name": "[Phase 4-4] 정렬 옵션",
-      "description": "shadcn Select로 정렬 UI 구현(별점순/최근추가순/제목가나다순). URL ?sort= 동기화. book-list.tsx에 클라이언트 사이드 정렬 로직 추가.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "f9f6061b-dc05-4a43-a835-58be59e05315"
-        }
-      ],
-      "createdAt": "2026-04-17T08:03:40.267Z",
-      "updatedAt": "2026-04-17T08:03:40.267Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/books/book-sort.tsx",
-          "type": "CREATE",
-          "description": "정렬 컴포넌트"
-        },
-        {
-          "path": "src/components/books/book-list.tsx",
-          "type": "TO_MODIFY",
-          "description": "정렬 로직 추가"
-        }
-      ],
-      "implementationGuide": "src/components/books/book-sort.tsx('use client'):\n- shadcn Select: rating-desc(별점높은순), recent(최근순), title-asc(가나다순)\n- useSearchParams+useRouter로 ?sort= URL 동기화\n\nbook-list.tsx 수정:\n- sort 파라미터에 따라 books 배열 정렬\n- rating-desc: rating 내림차순\n- recent: id 기준(Notion 생성순)\n- title-asc: title 오름차순 localeCompare",
-      "verificationCriteria": "정렬 변경 시 즉시 재정렬. URL ?sort= 동기화. 검색+필터+정렬 동시 동작. npm run check-all 통과.",
-      "analysisResult": "북로그(BookLog) Phase 4 추가 기능 — Phase 3 완료 후 진행. 각 태스크는 순차 의존."
-    },
-    {
-      "id": "95920f49-dfce-4c8f-857b-64ad8a37ab47",
-      "name": "[Phase 4-5] ISR 설정",
-      "description": "src/app/books/page.tsx에 export const revalidate = 60 추가. 선택적으로 Notion 변경 시 즉시 재검증하는 Route Handler 구현.",
-      "notes": "revalidate는 Next.js 캐시 설정. Vercel 배포 환경에서 실제 동작 확인 필요.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "7d8d3b18-7494-4a3f-908b-f709dafb3cc5"
-        }
-      ],
-      "createdAt": "2026-04-17T08:03:40.267Z",
-      "updatedAt": "2026-04-17T08:03:40.267Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/books/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "revalidate 추가"
+          "description": "공유 버튼 클라이언트 컴포넌트"
         },
         {
           "path": "src/app/books/[id]/page.tsx",
           "type": "TO_MODIFY",
-          "description": "revalidate 추가"
+          "description": "ShareButton 배치"
         },
         {
-          "path": "src/app/api/revalidate/route.ts",
-          "type": "CREATE",
-          "description": "수동 재검증 API(선택)"
+          "path": "src/components/ui/button.tsx",
+          "type": "DEPENDENCY",
+          "description": "shadcn Button 컴포넌트"
         }
       ],
-      "implementationGuide": "src/app/books/page.tsx에 추가:\n- export const revalidate = 60\n\n선택: src/app/api/revalidate/route.ts:\n- POST 핸들러: revalidatePath('/books') 호출\n- 간단한 secret token 검증\n\nsrc/app/books/[id]/page.tsx에도 revalidate = 60 추가",
-      "verificationCriteria": "Notion 데이터 수정 후 최대 60초 내 웹 반영. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Phase 4 추가 기능 — Phase 3 완료 후 진행. 각 태스크는 순차 의존."
+      "implementationGuide": "// share-button.tsx\n'use client'\nimport { useState } from 'react'\nimport { Share2, Check } from 'lucide-react'\nimport { Button } from '@/components/ui/button'\n\nexport function ShareButton({ title, text='' }) {\n  const [copied, setCopied] = useState(false)\n  async function handleShare() {\n    const url = window.location.href\n    try {\n      if (typeof navigator !== 'undefined' && 'share' in navigator) {\n        await navigator.share({ title, text, url })\n      } else {\n        await navigator.clipboard.writeText(url)\n        setCopied(true)\n        setTimeout(() => setCopied(false), 2000)\n      }\n    } catch (err) {\n      if (err instanceof Error && err.name === 'AbortError') return\n      // clipboard 실패 시 silent\n    }\n  }\n  return (\n    <Button variant=\"outline\" size=\"sm\" onClick={handleShare}>\n      {copied ? <Check className=\"h-4 w-4\" /> : <Share2 className=\"h-4 w-4\" />}\n      {copied ? '복사됨' : '공유'}\n    </Button>\n  )\n}\n\n// [id]/page.tsx — ShareButton 추가 위치\n<div className=\"flex items-center gap-2\">\n  <Badge>{getStatusLabel(book.status)}</Badge>\n  <ShareButton title={book.title} text={book.summary ?? ''} />\n</div>",
+      "verificationCriteria": "1. 데스크톱 Chrome: 클릭 시 URL 클립보드 복사 + 2초 Check 아이콘 피드백\n2. 공유 취소 시 에러 메시지 없음\n3. TypeScript strict 오류 없음\n4. 서버 컴포넌트([id]/page.tsx)에서 클라이언트 컴포넌트(ShareButton) 경계 정상 동작\n5. npm run check-all 통과",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T6 ShareButton + 상세 페이지 통합 완료. share-button.tsx 'use client' 신규 생성 — window.location.href로 URL 자체 획득, navigator.share 지원 감지 후 네이티브 공유, 미지원 시 navigator.clipboard.writeText() 폴백, 2초간 Check 아이콘 피드백, AbortError silent 처리. 초기 TypeScript narrowing 오류 발생 — window.navigator 로컬 변수로 분리하여 해결. 상세 페이지 Badge 옆에 ShareButton 배치 (flex justify-between). SSR 응답에서 aria-label=\"이 책 공유하기\" 확인. check-all 통과.",
+      "completedAt": "2026-04-17T15:58:54.965Z"
     },
     {
-      "id": "978476f5-b634-4767-8903-3dfdf4ec0279",
-      "name": "[Phase 5-1] 성능 최적화",
-      "description": "next/image sizes/priority/placeholder 속성 최적화. src/lib/books.ts에 unstable_cache 또는 React cache 적용. Lighthouse Performance 90+ 달성.",
-      "status": "pending",
+      "id": "e58f9de9-480e-4d52-b317-d8f7477ff840",
+      "name": "T7: 통합 QA 및 빌드 검증",
+      "description": "모든 v2 기능 구현 완료 후 통합 검증을 수행합니다.\n\n1. npm run check-all (lint + typecheck + format)\n2. npm run build (프로덕션 빌드)\n3. 주요 시나리오 수동 검증:\n   - 그리드 + 검색어 하이라이트\n   - 리스트 뷰 + 검색어 하이라이트\n   - 필터(읽는중) + 랜덤 추천 → 읽는중 책만 대상인지 확인\n   - 별점 분포 차트 실제 데이터 일치\n   - 상세 페이지 공유 버튼 복사 확인\n   - URL 조합 (?status=reading&q=코드&sort=rating-high&view=list) 새로고침 후 상태 유지",
+      "notes": "빌드 오류 없이 통과해야 완료. TypeScript strict 에러 0건 필수.",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "95920f49-dfce-4c8f-857b-64ad8a37ab47"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/books/book-card.tsx",
-          "type": "TO_MODIFY",
-          "description": "image 최적화"
+          "taskId": "cc05739d-a2da-4c70-bac4-c9c02895773b"
         },
         {
-          "path": "src/lib/books.ts",
-          "type": "TO_MODIFY",
-          "description": "캐싱 적용"
+          "taskId": "b8331bab-0990-4999-8e18-eebe0d39da3d"
         },
         {
-          "path": "next.config.ts",
-          "type": "TO_MODIFY",
-          "description": "bundle-analyzer 설정"
+          "taskId": "2283634d-2dfa-423e-9e62-8ae4108afe1d"
         }
       ],
-      "implementationGuide": "book-card.tsx: next/image에 sizes='(max-width:640px) 100vw,(max-width:1024px) 50vw,33vw', 첫 3개 카드 priority=true, placeholder='blur'\nbooks.ts: unstable_cache로 getBooks 래핑, revalidate:60 설정\nbook-card-skeleton.tsx: 이미지 영역에 blurDataURL placeholder\n번들 분석: @next/bundle-analyzer 설치 후 ANALYZE=true npm run build",
-      "verificationCriteria": "Lighthouse Performance 90+. LCP 2.5s 이하. 번들 크기 기준치 +20% 이내. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
-    },
-    {
-      "id": "8fb4788a-901f-44d5-a374-34968ba9373a",
-      "name": "[Phase 5-2] SEO 최적화",
-      "description": "src/app/sitemap.ts 동적 생성(getBooks 활용, /books/[id] URL 포함). src/app/robots.ts 생성. 각 페이지 metadata에 openGraph/twitter 설정.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "978476f5-b634-4767-8903-3dfdf4ec0279"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/sitemap.ts",
-          "type": "CREATE",
-          "description": "동적 사이트맵"
-        },
-        {
-          "path": "src/app/robots.ts",
-          "type": "CREATE",
-          "description": "robots.txt"
-        },
-        {
-          "path": "src/app/books/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "OG 메타데이터"
-        },
-        {
-          "path": "src/app/books/[id]/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "동적 OG 메타데이터"
-        }
-      ],
-      "implementationGuide": "src/app/sitemap.ts:\n- getBooks() 호출 → books.map(b => ({ url: .../books/b.id, lastModified: new Date() }))\n- 정적 경로(/, /books) 포함\n\nsrc/app/robots.ts:\n- rules: { userAgent: '*', allow: '/' }\n- sitemap URL 포함\n\n각 페이지 metadata:\n- openGraph: { title, description, images: [coverUrl] }\n- twitter: { card: 'summary_large_image' }",
-      "verificationCriteria": "/sitemap.xml 정상 응답. /robots.txt 정상 응답. OG 태그 확인(og:title, og:image). Lighthouse SEO 90+.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
-    },
-    {
-      "id": "4a706cba-38f4-4e04-827c-e5941742ec0b",
-      "name": "[Phase 5-3] 접근성 검토",
-      "description": "모든 next/image alt 속성 전수 점검. 키보드 네비게이션(Tab/Enter) 검증. WCAG AA 색 대비 검증(다크/라이트 모드). Lighthouse Accessibility 95+ 달성.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "8fb4788a-901f-44d5-a374-34968ba9373a"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/books/book-card.tsx",
-          "type": "TO_MODIFY",
-          "description": "alt 속성"
-        },
-        {
-          "path": "src/components/books/filter-tabs.tsx",
-          "type": "TO_MODIFY",
-          "description": "aria-label"
-        },
-        {
-          "path": "src/components/books/book-search.tsx",
-          "type": "TO_MODIFY",
-          "description": "label 연결"
-        }
-      ],
-      "implementationGuide": "1. 모든 Image 컴포넌트 alt 속성 확인: 커버 이미지는 alt={book.title}, placeholder는 alt='책 표지 없음'\n2. 키보드 포커스 스타일 확인: focus-visible:ring-2 클래스 존재 여부\n3. Badge, Button 컴포넌트 aria-label 필요 시 추가\n4. 색 대비: 텍스트-배경 4.5:1 이상 (Tailwind 시맨틱 클래스 사용 시 자동 보장)\n5. 필터 탭: aria-label='독서 상태 필터' 추가\n6. 검색 Input: label 또는 aria-label 연결",
-      "verificationCriteria": "Lighthouse Accessibility 95+. Tab 키 순회 정상. 모든 Image에 alt 존재. WCAG AA 통과.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
-    },
-    {
-      "id": "c8eb9743-f10a-4dfa-ae1c-4b0e4209a8b0",
-      "name": "[Phase 5-4] 에러 처리 및 로깅",
-      "description": "전역 src/app/error.tsx, src/app/not-found.tsx 검토 및 개선. Notion API 실패 시 사용자 친화적 메시지 확인. Vercel Analytics 또는 Sentry 도입(선택).",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "4a706cba-38f4-4e04-827c-e5941742ec0b"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/not-found.tsx",
-          "type": "CREATE",
-          "description": "전역 404"
-        },
-        {
-          "path": "src/app/error.tsx",
-          "type": "CREATE",
-          "description": "전역 에러"
-        },
-        {
-          "path": "src/app/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "Analytics 추가(선택)"
-        }
-      ],
-      "implementationGuide": "src/app/not-found.tsx:\n- 404 메시지 + 홈/북로그 링크 버튼\n\nsrc/app/error.tsx('use client'):\n- 전역 에러 UI, reset 버튼\n- Notion API 실패 케이스 안내 메시지\n\nVercel Analytics(선택):\n- npm install @vercel/analytics\n- src/app/layout.tsx에 Analytics 컴포넌트 추가\n\nSentry(선택):\n- npx @sentry/wizard@latest -i nextjs",
-      "verificationCriteria": "/nonexistent 경로 접근 시 not-found UI 표시. Notion API 실패 시 에러 UI 표시. npm run build 성공.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
-    },
-    {
-      "id": "e7b05436-62ce-4823-9a9f-66a913c113d1",
-      "name": "[Phase 5-5] Vercel 배포 파이프라인",
-      "description": "Vercel 프로젝트 연결(GitHub 연동). 환경변수 프로덕션 설정(NOTION_API_KEY, NOTION_DATABASE_ID). 프리뷰 배포 확인 후 프로덕션 배포.",
-      "notes": "수동 작업 포함(Vercel 대시보드). 환경변수 값은 .env.local과 동일.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "c8eb9743-f10a-4dfa-ae1c-4b0e4209a8b0"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": ".env.example",
-          "type": "REFERENCE",
-          "description": "프로덕션 환경변수 참고"
-        }
-      ],
-      "implementationGuide": "1. vercel.com에서 새 프로젝트 생성, GitHub repo 연결\n2. Vercel 대시보드 > Settings > Environment Variables:\n   - NOTION_API_KEY: Production+Preview 환경 설정\n   - NOTION_DATABASE_ID: Production+Preview 환경 설정\n3. 프리뷰 URL로 /books, /books/[id] 접근 확인\n4. 프로덕션 배포: main 브랜치 push 또는 Vercel 대시보드에서 Promote\n5. 커스텀 도메인 연결(선택)",
-      "verificationCriteria": "프로덕션 URL로 /books 접근 가능. 환경변수 정상 로드. Notion 데이터 실제 표시.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
-    },
-    {
-      "id": "02178b56-1bf9-47d0-9625-08dbc8d7f98f",
-      "name": "[Phase 5-6] 모니터링 및 분석",
-      "description": "Vercel Analytics 또는 Plausible 활성화. Web Vitals 대시보드(CLS/LCP/FID) 확인. 성능 지표 기준치 달성 여부 검증.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "e7b05436-62ce-4823-9a9f-66a913c113d1"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "Analytics 컴포넌트"
-        }
-      ],
-      "implementationGuide": "Vercel Analytics:\n- Vercel 대시보드 > Analytics 탭 활성화\n- npm install @vercel/analytics\n- src/app/layout.tsx에 import { Analytics } from '@vercel/analytics/react'; 추가\n\nWeb Vitals 확인:\n- Vercel Speed Insights 또는 Lighthouse CI\n- CLS < 0.1, LCP < 2.5s, FID < 100ms 목표\n\n모바일 실기기 또는 Chrome DevTools Mobile 시뮬레이션으로 검증",
-      "verificationCriteria": "Vercel Analytics 대시보드 데이터 수집 확인. CLS < 0.1, LCP < 2.5s. Web Vitals 대시보드 접근 가능.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
-    },
-    {
-      "id": "2019d503-eb5d-401c-8ff9-acddd19daa83",
-      "name": "[Phase 5-7] 최종 QA 및 README 업데이트",
-      "description": "Chrome/Safari/Firefox 브라우저 크로스테스트. 모바일 실기기 테스트. npm run check-all + npm run build 최종 통과. README 배포 URL 및 프로젝트 설명 업데이트.",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "02178b56-1bf9-47d0-9625-08dbc8d7f98f"
-        }
-      ],
-      "createdAt": "2026-04-17T08:04:28.151Z",
-      "updatedAt": "2026-04-17T08:04:28.151Z",
-      "relatedFiles": [
-        {
-          "path": "README.md",
-          "type": "TO_MODIFY",
-          "description": "배포 URL + 실행 방법"
-        }
-      ],
-      "implementationGuide": "1. Chrome/Safari/Firefox에서 /books, /books/[id] 전체 기능 테스트\n2. 모바일(375px)에서 레이아웃, 탭 필터, 카드 그리드 확인\n3. npm run check-all — TypeScript strict + ESLint + Prettier 모두 통과\n4. npm run build — 빌드 에러 0건 확인\n5. README.md 업데이트:\n   - 프로젝트 소개, 기술 스택\n   - 실행 방법(npm install, env 설정, npm run dev)\n   - 배포 URL",
-      "verificationCriteria": "3개 브라우저 정상 동작. npm run check-all 통과. npm run build 성공. README에 배포 URL 포함. Lighthouse 전 항목 90+.",
-      "analysisResult": "북로그(BookLog) Phase 5 최적화 및 배포 — Phase 4 완료 후 순차 진행."
+      "createdAt": "2026-04-17T15:36:05.302Z",
+      "updatedAt": "2026-04-17T16:01:31.565Z",
+      "relatedFiles": [],
+      "implementationGuide": "터미널에서 순서대로 실행:\n1. npm run check-all\n2. npm run build\n오류 발생 시 해당 태스크로 돌아가 수정 후 재검증.",
+      "verificationCriteria": "1. npm run check-all 통과 (exit 0)\n2. npm run build 통과 (exit 0)\n3. 5가지 기능 시나리오 모두 정상 동작\n4. 뷰 전환 + 검색 + 필터 조합 URL에서 새로고침 후 상태 복원\n5. TypeScript strict 에러 0건",
+      "analysisResult": "북로그 v2: 5가지 기능(뷰 모드 토글, 별점 분포 차트, 랜덤 추천 버튼, 검색어 하이라이트, 공유 버튼) 구현. 파일 1회 수정 원칙 — 총 10개 파일, 각 1회씩만 수정/생성. 타입 우선 확정 후 UI 구현. 핵심 규칙: book-list.tsx는 뷰 토글+랜덤추천+searchQuery 전파를 한 번에 작성, book-list-item.tsx 생성 시 searchQuery prop 선탑재하여 Phase 8 작업 흡수.",
+      "summary": "T7 통합 QA 완료. npm run check-all 통과(typecheck+lint+format), npm run build 통과(프로덕션 빌드). SSR 시나리오 검증: (1) ?q=주식&view=list → mark 태그 2개 하이라이트 + 리스트 뷰 aria-pressed=\"true\". (2) ?status=reading&q=주식&view=list → 검색 결과 없음 상태 정상 표시 (읽는중+주식 교집합 없음 확인). (3) 별점 분포 섹션 렌더링 + 랜덤 추천 버튼 렌더링. 중간 빌드 충돌(.next) 발생 → dev 서버 재시작으로 해결. 10개 파일 1회 수정 원칙 준수, 모든 v2 기능 정상 동작.",
+      "completedAt": "2026-04-17T16:01:31.559Z"
     }
   ]
 }
