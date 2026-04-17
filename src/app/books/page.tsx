@@ -7,9 +7,21 @@ import { BookList } from '@/components/books/book-list'
 import { getBooks } from '@/lib/books'
 import { calculateStats } from '@/lib/book-stats'
 
+export const revalidate = 60
+
 export const metadata: Metadata = {
   title: '독서 목록',
   description: 'Notion으로 관리하는 나의 독서 기록',
+  openGraph: {
+    title: '독서 목록 | 북로그',
+    description: 'Notion으로 관리하는 나의 독서 기록',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '독서 목록 | 북로그',
+    description: 'Notion으로 관리하는 나의 독서 기록',
+  },
 }
 
 export default async function BooksPage() {

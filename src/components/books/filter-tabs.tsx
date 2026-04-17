@@ -39,7 +39,11 @@ export function FilterTabs({ books }: FilterTabsProps) {
   }
 
   return (
-    <Tabs value={currentStatus} onValueChange={handleTabChange}>
+    <Tabs
+      value={currentStatus}
+      onValueChange={handleTabChange}
+      aria-label="독서 상태 필터"
+    >
       <TabsList className="grid w-full grid-cols-4">
         {TABS.map(tab => (
           <TabsTrigger

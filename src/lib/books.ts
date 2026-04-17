@@ -1,5 +1,6 @@
 import 'server-only'
 
+import { unstable_cache } from 'next/cache'
 import { notion, DATABASE_ID } from '@/lib/notion'
 import type { Book, BookStatus } from '@/types/book'
 import type { PageObjectResponse } from '@notionhq/client/build/src/api-endpoints/common'
@@ -68,18 +69,22 @@ export function mapNotionPageToBook(page: PageObjectResponse): Book {
   }
 }
 
-export async function getBooks(): Promise<Book[]> {
-  try {
-    const response = await notion.dataSources.query({
-      data_source_id: DATABASE_ID,
-      sorts: [{ timestamp: 'created_time', direction: 'descending' }],
-    })
-    return (response.results as PageObjectResponse[]).map(mapNotionPageToBook)
-  } catch (error) {
-    console.error('[getBooks] Notion API 오류:', error)
-    return []
-  }
-}
+export const getBooks = unstable_cache(
+  async (): Promise<Book[]> => {
+    try {
+      const response = await notion.dataSources.query({
+        data_source_id: DATABASE_ID,
+        sorts: [{ timestamp: 'created_time', direction: 'descending' }],
+      })
+      return (response.results as PageObjectResponse[]).map(mapNotionPageToBook)
+    } catch (error) {
+      console.error('[getBooks] Notion API 오류:', error)
+      return []
+    }
+  },
+  ['books-list'],
+  { revalidate: 60, tags: ['books'] }
+)
 
 export async function getBookById(id: string): Promise<Book | null> {
   try {
